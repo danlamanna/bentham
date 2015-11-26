@@ -1,6 +1,6 @@
 First build the image:
 ```
-docker build -t bentham/posgres:latest .
+docker build -t bentham/postgres:latest .
 ```
 
 Then run the image with host portmapping
