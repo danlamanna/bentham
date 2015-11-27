@@ -1,12 +1,6 @@
 import cherrypy
 import json
-from peewee import PostgresqlDatabase
 from playhouse.shortcuts import model_to_dict
-
-db = PostgresqlDatabase('bentham',
-                        user='postgres',
-                        host='172.17.0.1')
-
 from database import Event, db
 
 
@@ -14,10 +8,10 @@ class Events(object):
     exposed = True
 
     def GET(self, since_id=0):
-        logs = Log.select() \
-                  .where(Log.id > since_id) \
-                  .order_by(Log.occurred_at.desc(),
-                            Log.created_at.desc())
+        logs = Event.select() \
+                  .where(Event.id > since_id) \
+                  .order_by(Event.occurred_at.desc(),
+                            Event.created_at.desc())
 
         for log in logs:
             log.created_at = str(log.created_at)
@@ -38,9 +32,9 @@ class Events(object):
             body['raw_json'] = {}
 
         try:
-            Log(**body).save()
+            Event(**body).save()
         except:
-            # Log error
+            # Event error
             db.rollback()
             return json.dumps({"success": False})
         finally:
@@ -48,7 +42,7 @@ class Events(object):
 
 if __name__ == '__main__':
     cherrypy.tree.mount(
-        Logs(), '/api/logs',
+        Events(), '/api/logs',
         {'/':
             {'request.dispatch': cherrypy.dispatch.MethodDispatcher()}
         }
