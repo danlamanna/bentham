@@ -3,8 +3,8 @@ from __future__ import absolute_import
 from celery import Celery
 
 app = Celery('bentham',
-             broker='amqp://rabbit:rabbit@rabbit',
-             backend='amqp://rabbit:rabbit@rabbit',
+             broker='amqp://rabbit:rabbit@localhost',
+             backend='amqp://rabbit:rabbit@localhost',
              include=['bentham.trackers.fib'])
 
 # Optional configuration, see the application user guide.
