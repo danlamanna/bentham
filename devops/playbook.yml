@@ -1,0 +1,33 @@
+---
+- hosts: server
+  sudo: true
+  tasks:
+    - name: update apt
+      apt: update_cache=true
+
+    - name: ensure packages are installed
+      apt: name={{item}}
+      with_items:
+        - postgresql
+        - libpq-dev
+        - python-psycopg2
+        - postgresql-contrib
+
+    - name: add database
+      sudo_user: postgres
+      postgresql_db:
+        name=bentham
+
+    - name: add hstore extension
+      sudo_user: postgres
+      postgresql_ext:
+        name=hstore
+        db=bentham
+
+    - name: add bentham user
+      sudo_user: postgres
+      postgresql_user:
+        db=bentham
+        name=bentham
+        password=bentham
+        priv=ALL
