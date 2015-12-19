@@ -4,6 +4,14 @@
     - name: update apt
       apt: update_cache=true
 
+    - name: common packages
+      apt:
+        name={{ item }}
+      with_items:
+        - python-dev
+        - python-pip
+
+
     - include: "postgres.yml"
     - include: "rabbitmq.yml"
     - include: "celery.yml"

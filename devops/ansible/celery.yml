@@ -1,0 +1,11 @@
+- name: celery | create service account for celery
+  user: name=celery
+        system=yes
+        home=/var/lib/celery
+        shell=/bin/false
+        state=present
+
+- name: celery | install celery
+  pip:
+    name: "celery"
+    state: present
