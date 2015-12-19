@@ -1,12 +1,12 @@
-- name: rabbitmq | install rabbitmq
+- name: install rabbitmq
   apt: name=rabbitmq-server
 
-- name: rabbitmq | start service
+- name: start service
   service:
     name: rabbitmq-server
     state: started
 
-- name: rabbitmq | add user
+- name: add user
   rabbitmq_user:
     user: rabbit
     password: rabbit
@@ -16,7 +16,7 @@
     write_priv: .*
     state: present
 
-- name: rabbitmq | remove default guest user
+- name: remove default guest user
   rabbitmq_user:
     user: guest
     state: absent
