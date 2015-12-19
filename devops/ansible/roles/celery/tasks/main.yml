@@ -20,11 +20,13 @@
     - celerybeat
 
 
-- name: copy celery and celery beat daemon scripts
+- name: copy celery and celery beat defaults scripts
   template:
     src: "{{ item }}.defaults.j2"
-    dest: "/etc/defaults/{{ item }}"
+    dest: "/etc/default/{{ item }}"
     mode: 0755
   with_items:
     - celeryd
     - celerybeat
+  notify:
+    - restart celeryd
