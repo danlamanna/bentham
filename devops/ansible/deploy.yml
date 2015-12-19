@@ -1,6 +1,6 @@
 - hosts: server
   sudo: yes
-  tasks:
+  pre_tasks:
     - name: update apt
       apt: update_cache=true
 
@@ -11,7 +11,7 @@
         - python-dev
         - python-pip
 
-
-    - include: "postgres.yml"
-    - include: "rabbitmq.yml"
-    - include: "celery.yml"
+  roles:
+    - role: postgres
+    - role: rabbitmq
+    - role: celery
