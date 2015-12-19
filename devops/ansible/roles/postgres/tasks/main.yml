@@ -24,3 +24,21 @@
     name=bentham
     password=bentham
     priv=ALL
+
+- name: postgres | listen on all addresses
+  lineinfile:
+    dest=/etc/postgresql/9.3/main/postgresql.conf
+    regexp=^listen_addresses
+    line="listen_addresses = '*'"
+
+- name: postgres | allow md5 authentication
+  replace:
+    dest=/etc/postgresql/9.3/main/pg_hba.conf
+    regexp='peer$'
+    replace='md5'
+
+- name: postgres | allow local connections from 0.0.0.0/0
+  replace:
+    dest=/etc/postgresql/9.3/main/pg_hba.conf
+    regexp='127\.0\.0\.1\/32'
+  notify: restart postgresql
