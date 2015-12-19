@@ -9,3 +9,22 @@
   pip:
     name: "celery"
     state: present
+
+- name: copy celery and celery beat daemon scripts
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/init.d/{{ item }}"
+    mode: 0755
+  with_items:
+    - celeryd
+    - celerybeat
+
+
+- name: copy celery and celery beat daemon scripts
+  template:
+    src: "{{ item }}.defaults.j2"
+    dest: "/etc/defaults/{{ item }}"
+    mode: 0755
+  with_items:
+    - celeryd
+    - celerybeat
