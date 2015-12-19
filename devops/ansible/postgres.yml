@@ -1,0 +1,26 @@
+- name: postgres | ensure packages are installed
+  apt: name={{item}}
+  with_items:
+    - postgresql
+    - libpq-dev
+    - python-psycopg2
+    - postgresql-contrib
+
+- name: postgres | add database
+  sudo_user: postgres
+  postgresql_db:
+    name=bentham
+
+- name: postgres | add hstore extension
+  sudo_user: postgres
+  postgresql_ext:
+    name=hstore
+    db=bentham
+
+- name: postgres | add bentham user
+  sudo_user: postgres
+  postgresql_user:
+    db=bentham
+    name=bentham
+    password=bentham
+    priv=ALL
