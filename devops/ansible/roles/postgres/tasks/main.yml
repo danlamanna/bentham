@@ -1,4 +1,4 @@
-- name: postgres | ensure packages are installed
+- name: ensure packages are installed
   apt: name={{item}}
   with_items:
     - postgresql
@@ -6,21 +6,40 @@
     - python-psycopg2
     - postgresql-contrib
 
-- name: postgres | add database
+- name: add database
   sudo_user: postgres
   postgresql_db:
     name=bentham
 
-- name: postgres | add hstore extension
+- name: add hstore extension
   sudo_user: postgres
   postgresql_ext:
     name=hstore
     db=bentham
 
-- name: postgres | add bentham user
+- name: add bentham user
   sudo_user: postgres
   postgresql_user:
     db=bentham
     name=bentham
     password=bentham
     priv=ALL
+
+- name: listen on all addresses
+  lineinfile:
+    dest=/etc/postgresql/9.3/main/postgresql.conf
+    regexp=^listen_addresses
+    line="listen_addresses = '*'"
+
+- name: allow md5 authentication
+  replace:
+    dest=/etc/postgresql/9.3/main/pg_hba.conf
+    regexp='peer$'
+    replace='md5'
+
+- name: allow local connections from 0.0.0.0/0
+  replace:
+    dest=/etc/postgresql/9.3/main/pg_hba.conf
+    regexp='127\.0\.0\.1\/32'
+    replace='0.0.0.0/0'
+  notify: restart postgresql
