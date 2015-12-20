@@ -31,15 +31,15 @@
     regexp=^listen_addresses
     line="listen_addresses = '*'"
 
-- name: allow md5 authentication
-  replace:
+- name: listen locally (IPv4)
+  lineinfile:
     dest=/etc/postgresql/9.3/main/pg_hba.conf
-    regexp='peer$'
-    replace='md5'
-
-- name: allow local connections from 0.0.0.0/0
-  replace:
+    line='host    all             all             127.0.0.1/32            md5'
+    state=absent
+- name: listen locally (IPv4)
+  lineinfile:
     dest=/etc/postgresql/9.3/main/pg_hba.conf
-    regexp='127\.0\.0\.1\/32'
-    replace='0.0.0.0/0'
+    line='host    all             all             0.0.0.0/0            md5'
+    insertafter='^# IPv4 local connections:'
+    state=present
   notify: restart postgresql
