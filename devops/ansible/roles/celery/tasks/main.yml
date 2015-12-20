@@ -1,9 +1,10 @@
 - name: create service account for celery
-  user: name=celery
-        system=yes
-        home=/var/lib/celery
-        shell=/bin/false
-        state=present
+  user:
+    name: celery
+    system: yes
+    home: /var/lib/celery
+    shell: /bin/bash
+    state: present
 
 - name: install celery
   pip:
@@ -18,7 +19,6 @@
   with_items:
     - celeryd
     - celerybeat
-
 
 - name: copy celery and celery beat defaults scripts
   template:
