@@ -23,7 +23,7 @@
     db=bentham
     name=bentham
     password=bentham
-    priv=ALL
+    role_attr_flags=SUPERUSER
 
 - name: listen on all addresses
   lineinfile:
@@ -43,3 +43,13 @@
     insertafter='^# IPv4 local connections:'
     state=present
   notify: restart postgresql
+
+- name: create schema
+  sudo_user: postgres
+  shell:
+    "psql bentham -f /bentham/devops/ansible/roles/postgres/files/schema.sql"
+
+- name: create triggers
+  sudo_user: postgres
+  shell:
+    "psql bentham -f /bentham/devops/ansible/roles/postgres/files/triggers.sql"
