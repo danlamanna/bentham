@@ -1,24 +1,27 @@
-import requests
-from time import sleep
+import select
+import psycopg2
+import psycopg2.extensions
 
-CLIENT_INTERVAL = 60
-SERVER_URL = 'http://127.0.0.1:8080/api/logs'
+BENTHAM_EVENTS_CHANNEL = 'bentham_events'
 
-def handler(event):
-    print 'Got an event, %d' % int(event['id'])
+
+def main():
+    while True:
+        if select.select([conn],[],[],5) == ([],[],[]):
+            pass
+        else:
+            conn.poll()
+            while conn.notifies:
+                print(conn.notifies.pop(0).payload)
 
 if __name__ == '__main__':
-    since_id = 0
+    conn = psycopg2.connect(database='bentham',
+                            user='bentham',
+                            password='bentham',
+                            host='192.168.13.37')
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
 
-    while True:
-        print 'Checking for events...'
+    curs = conn.cursor()
+    curs.execute('LISTEN %s' % BENTHAM_EVENTS_CHANNEL)
 
-        r = requests.get(SERVER_URL, params={'since_id': since_id})
-
-        if r.ok and r.json()['data'] and r.json()['success']:
-            data = r.json()['data']
-            since_id = max([e['id'] for e in data])
-
-            map(handler, data)
-
-        sleep(CLIENT_INTERVAL)
+    main()
