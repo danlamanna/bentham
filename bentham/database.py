@@ -1,22 +1,26 @@
-from datetime import datetime
-from peewee import Model, DateTimeField, IntegerField, CharField
-from playhouse.postgres_ext import BinaryJSONField
+from peewee import Model, DateTimeField, IntegerField, CharField, TextField, BooleanField, PostgresqlDatabase
+from playhouse.postgres_ext import JSONField
 
 from config import get_pg_db
 
-db = get_pg_db()
+database = PostgresqlDatabase('bentham', **{'host': '192.168.13.37', 'password': 'bentham', 'user': 'bentham'})
 
 class Event(Model):
     class Meta:
-        database = db
+        database = database
+        db_table = 'events'
 
         indexes = (
-            (('occurred_at', 'message'), True),
+            (('occurred_at', 'tracker', 'source_identifier', 'raw_event',
+              'raw_event_json'), True),
         )
 
-    created_at = DateTimeField(default=datetime.now)
-    occurred_at = DateTimeField(default=datetime.now)
-    priority = IntegerField()
+    id = IntegerField()
+    created_at = DateTimeField()
+    occurred_at = DateTimeField()
+    tracker = CharField()
+    source_identifier = CharField()
     message = CharField()
-    raw = CharField()
-    raw_json = BinaryJSONField()
+    raw_event = TextField()
+    raw_event_json = JSONField()
+    ack = BooleanField()
