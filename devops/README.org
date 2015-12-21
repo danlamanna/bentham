@@ -1,0 +1,8 @@
+* Vagrant
+** vagrant-cachier
+   =Vagrantfile= will utilize vagrant-cachier if the plugin exists.
+
+   To install vagrant-cachier, ensure =ruby-devel= is installed and run:
+   #+BEGIN_SRC sh
+     vagrant plugin install vagrant-cachier
+   #+END_SRC

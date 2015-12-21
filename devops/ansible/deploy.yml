@@ -1,0 +1,24 @@
+- hosts: server
+  sudo: yes
+  pre_tasks:
+    - name: update apt
+      apt: update_cache=true
+
+    - name: common packages
+      apt:
+        name={{ item }}
+      with_items:
+        - python-dev
+        - python-pip
+
+    - name: install bentham
+      pip:
+        chdir: /bentham
+        extra_args: "-e"
+        name: .
+      sudo: yes
+
+  roles:
+    - role: postgres
+    - role: rabbitmq
+    - role: celery
