@@ -1,0 +1,82 @@
+* Usecases
+** Twitter
+** Github
+*** Personal
+*** Repository
+*** Other Users
+** RSS Feeds
+** System Logs
+** Email
++ do we want to store a whole email?
+
+** One-off events
+e.g., =bentham message foo=
+
+#+BEGIN_SRC sh
+if [ $0 -ne "foo" ]; then
+  bentham message 'foo'
+fi
+#+END_SRC
+
+#+BEGIN_SRC sh
+$> long_process.sh && bentham message "finished"
+#+END_SRC
+
+
+
+
+** Calendar
+*** Google
+*** Exchange (?)
+
+
+* Database Schema
+** events (tables)
+*** id (int, primary_key)
+*** created_at (timestamp)
++ When was it inserted into postgres
+*** occured_at (timestamp)
++ Timestamp from the actual event
+*** tracker (string)
++ celery task that ran
++ e.g., 'bentham.trackers.github_events'
+*** source (string)
++ human readable identifier
++ (tracker, source) should be unique for the system (not the database)
+*** message (string)
++ friendly string you want to display
++ would like to be able to support something like
+  #+BEGIN_SRC python
+  "{username} - Tweted at {timestamp}".format(raw_json)
+  #+END_SRC
+
+*** raw_event (blob)
+*** raw_event_json (json)
+*** read (bool)
++ Whether or not I have seen it (approximately) 
+
+
+
+
+* Database Migration (?)
+** peewee migrations
+
+
+* Command Line Management
+
+* Configuration Management
+
+* Deployment
+** Daemon Process (Celery Beat)
+** Development Environment?
+** Postgres
+** RabbitMQ
+** Celery Worker
+
+
+* Future Improvements
+** Score of importance
+** Some kind of tags table?
++ create groups of trackers etc "channels"
+
+

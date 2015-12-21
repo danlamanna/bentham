@@ -11,6 +11,13 @@
         - python-dev
         - python-pip
 
+    - name: install bentham
+      pip:
+        chdir: /bentham
+        extra_args: "-e"
+        name: .
+      sudo: yes
+
   roles:
     - role: postgres
     - role: rabbitmq
