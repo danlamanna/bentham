@@ -2,23 +2,37 @@ import os
 import yaml
 from playhouse.postgres_ext import PostgresqlExtDatabase
 
-def config_file():
-    if os.environ.has_key('BENTHAM_CONFIG'):
-        return os.environ.get('BENTHAM_CONFIG')
-    elif os.path.exists(os.path.expanduser('~/.config/bentham/config.yml')):
-        return os.path.expanduser('~/.config/bentham/config.yml')
-    elif os.path.exists('/etc/bentham.yml'):
-        return '/etc/bentham.yml'
-    else:
-        raise Exception('No configuration file found.')
+class Configuration(object):
 
-def get_config():
-    with open(config_file(), 'rb') as infile:
-        return yaml.load(infile)
+    config = None
 
-def get_pg_db():
-    config = get_config()
+    def __init__(self):
+        return self.load()
 
-    return PostgresqlExtDatabase(config['datastore']['database'],
-                                 **{k: v for k, v in config['datastore'].items() if \
-                                    k not in ('type', 'database')})
+    def load(self):
+        if not self.config:
+            with open(self.config_file(), 'rb') as infile:
+                self.config = yaml.load(infile)
+
+        return self.config
+
+    def config_file(self):
+        if os.environ.has_key('BENTHAM_CONFIG'):
+            return os.environ.get('BENTHAM_CONFIG')
+        elif os.path.exists(os.path.expanduser('~/.config/bentham/config.yml')):
+            return os.path.expanduser('~/.config/bentham/config.yml')
+        elif os.path.exists('/etc/bentham.yml'):
+            return '/etc/bentham.yml'
+        else:
+            raise Exception('No configuration file found.')
+
+
+    def get_pg_db(self):
+        config = self.load()
+
+        try:
+            return PostgresqlExtDatabase(config['datastore']['database'],
+                                         **{k: v for k, v in config['datastore'].items() if \
+                                            k not in ('type', 'database')})
+        except KeyError:
+            raise Exception('No datastore found in configuration.')
