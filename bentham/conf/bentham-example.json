@@ -1,7 +1,0 @@
-{
-    "database": {
-        "name": "bentham",
-        "user": "postgres",
-        "host": "172.17.0.1"
-    }
-}
