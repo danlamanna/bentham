@@ -2,6 +2,7 @@ from peewee import Model, DateTimeField, IntegerField, CharField, TextField, Boo
 from playhouse.postgres_ext import JSONField
 from bentham import configObject
 
+
 class Event(Model):
     class Meta:
         database = configObject.get_pg_db()

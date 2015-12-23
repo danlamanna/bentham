@@ -2,6 +2,7 @@ import os
 import yaml
 from playhouse.postgres_ext import PostgresqlExtDatabase
 
+
 class Configuration(object):
     def load(self):
         with open(self.config_file(), 'rb') as infile:
@@ -22,7 +23,7 @@ class Configuration(object):
 
         try:
             return PostgresqlExtDatabase(config['datastore']['database'],
-                                         **{k: v for k, v in config['datastore'].items() if \
+                                         **{k: v for k, v in config['datastore'].items() if
                                             k not in ('type', 'database')})
         except KeyError:
             raise Exception('No datastore found in configuration.')

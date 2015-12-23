@@ -2,18 +2,22 @@ import os
 import pytest
 import tempfile
 
+
 @pytest.fixture
 def empty_config_file():
     _, path = tempfile.mkstemp()
     return path
 
+
 def test_config_imports_properly():
-    from bentham import configObject
+    from bentham import configObject  # noqa
+
 
 def test_config_is_dictionary():
     from bentham import configObject
 
     assert type(configObject.load()) == dict
+
 
 def test_config_database_fails_if_no_datastore_specified(empty_config_file):
     from bentham import configObject
@@ -26,6 +30,7 @@ def test_config_database_fails_if_no_datastore_specified(empty_config_file):
         configObject.get_pg_db()
 
     assert e.value.message == 'No datastore found in configuration.'
+
 
 def test_config_raises_exception_if_no_configuration_file(monkeypatch):
     """
