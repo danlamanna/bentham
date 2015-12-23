@@ -15,9 +15,9 @@ def config_file():
     _, path = tempfile.mkstemp()
 
     with open(path, 'wb') as outfile:
-        yaml.dump({
+        outfile.write(yaml.dump({
             'some': 'value'
-        }, outfile, default_flow_style=False)
+        }, default_flow_style=False, encoding='utf-8'))
 
     return path
 
@@ -47,7 +47,7 @@ def test_config_database_fails_if_no_datastore_specified(empty_config_file):
     with pytest.raises(Exception) as e:
         configObject.get_pg_db()
 
-    assert e.value.message == 'No datastore found in configuration.'
+    assert str(e.value) == 'No datastore found in configuration.'
 
 
 def test_config_raises_exception_if_no_configuration_file(monkeypatch):
@@ -62,4 +62,4 @@ def test_config_raises_exception_if_no_configuration_file(monkeypatch):
     with pytest.raises(Exception) as e:
         configObject.config_file()
 
-    assert e.value.message == 'No configuration file found.'
+    assert str(e.value) == 'No configuration file found.'
