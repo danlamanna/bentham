@@ -11,15 +11,15 @@ def empty_config_file():
 
 
 @pytest.fixture
-def config_file():
-    _, path = tempfile.mkstemp()
+def config_file(empty_config_file):
+    config_file = empty_config_file
 
-    with open(path, 'wb') as outfile:
+    with open(config_file, 'wb') as outfile:
         outfile.write(yaml.dump({
             'some': 'value'
         }, default_flow_style=False, encoding='utf-8'))
 
-    return path
+    return config_file
 
 
 def test_config_imports_properly():
