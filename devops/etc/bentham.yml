@@ -1,0 +1,6 @@
+datastore:
+  type:     postgres
+  database: bentham
+  host:     localhost
+  user:     bentham
+  password: bentham
