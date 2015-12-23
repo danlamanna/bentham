@@ -1,0 +1,17 @@
+datastore:
+  type:     postgres
+  database: bentham
+  host:     192.168.13.37
+  user:     bentham
+  password: bentham
+
+trackers:
+  - type:     twitter
+    api_key:  foobar
+    secret:   foobarbaz
+    interval: 60
+
+  - type:     github
+    api_key:  foobar
+    secret:   foobarbaz
+    interval: 60

@@ -1,13 +1,11 @@
-from peewee import Model, DateTimeField, IntegerField, CharField, TextField, BooleanField, PostgresqlDatabase
+from peewee import Model, DateTimeField, IntegerField, CharField, TextField, BooleanField
 from playhouse.postgres_ext import JSONField
+from bentham import configObject
 
-from config import get_pg_db
-
-database = PostgresqlDatabase('bentham', **{'host': '192.168.13.37', 'password': 'bentham', 'user': 'bentham'})
 
 class Event(Model):
     class Meta:
-        database = database
+        database = configObject.get_pg_db()
         db_table = 'events'
 
         indexes = (

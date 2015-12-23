@@ -1,7 +1,7 @@
 import requests
-import json
 from time import sleep
 import twitter
+
 
 class EventTracker(object):
     def __init__(self, interval):
@@ -9,6 +9,7 @@ class EventTracker(object):
 
     def track(self):
         pass
+
 
 class TwitterEventTracker(EventTracker):
     identifier = 'twitter_dan_lamanna'

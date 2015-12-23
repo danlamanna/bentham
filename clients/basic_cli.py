@@ -1,13 +1,14 @@
-import select
 import psycopg2
-import psycopg2.extensions
+import select
+
+from bentham.config import get_pg_db
 
 BENTHAM_EVENTS_CHANNEL = 'bentham_events'
 
 
 def main():
     while True:
-        if select.select([conn],[],[],5) == ([],[],[]):
+        if select.select([conn], [], [], 5) == ([], [], []):
             pass
         else:
             conn.poll()
@@ -15,13 +16,11 @@ def main():
                 print(conn.notifies.pop(0).payload)
 
 if __name__ == '__main__':
-    conn = psycopg2.connect(database='bentham',
-                            user='bentham',
-                            password='bentham',
-                            host='192.168.13.37')
+    database = get_pg_db()
+    conn = database.get_conn()
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
 
-    curs = conn.cursor()
+    curs = database.get_cursor()
     curs.execute('LISTEN %s' % BENTHAM_EVENTS_CHANNEL)
 
     main()
