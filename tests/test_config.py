@@ -1,6 +1,7 @@
 import os
 import pytest
 import tempfile
+import yaml
 
 
 @pytest.fixture
@@ -9,12 +10,29 @@ def empty_config_file():
     return path
 
 
+@pytest.fixture
+def config_file():
+    _, path = tempfile.mkstemp()
+
+    with open(path, 'wb') as outfile:
+        yaml.dump({
+            'some': 'value'
+        }, outfile, default_flow_style=False)
+
+    return path
+
+
 def test_config_imports_properly():
     from bentham import configObject  # noqa
 
 
-def test_config_is_dictionary():
+def test_config_is_dictionary(config_file):
     from bentham import configObject
+
+    # todo - This can probably be a fixture as well
+    os.environ.update({
+        'BENTHAM_CONFIG': config_file
+    })
 
     assert type(configObject.load()) == dict
 
