@@ -45,7 +45,7 @@ class Schedule(object):
             schedule[tracker['name']] = {
                 'task': tracker['task'],
                 'schedule': timedelta(seconds=tracker['interval']),
-                'args': (tracker)
+                'args': (tracker, )
             }
 
         return schedule

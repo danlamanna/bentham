@@ -6,8 +6,8 @@ from bentham.trackers import app, BenthamTrackerTask
 def events(self, config):
     from datetime import datetime
 
-    with open("", "a") as fh:
-        fh.write("%s\n", datetime.now().isoformat())
+    with open("/tmp/foo", "a") as fh:
+        fh.write("{}\n".format(datetime.now().isoformat()))
 
 #    self.event(occurred_at=datetime.now(),
 #               tracker='some-tracker',
