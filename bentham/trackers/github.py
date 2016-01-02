@@ -4,6 +4,8 @@ from bentham.database import Event
 import dateutil.parser
 import json
 import requests
+import peewee
+import hashlib
 
 API_ROOT = "https://api.github.com/"
 
@@ -64,12 +66,13 @@ def notifications(self, config):
     message_manager = NotificationMessageManager(config)
 
     for notification in r.json():
-        event = Event()
-
-        event.tracker = config['name'],
-        event.occurred_at = dateutil.parser.parse(notification['updated_at']),
-        event.source_identifier = self.name,
-        event.message = message_manager.parse(notification),
-        event.raw_event_json = json.dumps(notification)
-
-        event.save()
+        try:
+            Event(tracker=self.name,
+                  occurred_at=dateutil.parser.parse(notification['updated_at']),
+                  source_identifier=config['name'],
+                  event_hash=notification['id'],
+                  message=message_manager.parse(notification),
+                  raw_event_json=json.dumps(notification)).save()
+        except peewee.IntegrityError:
+            self.db.rollback()
+            # Some kind of error logging here?

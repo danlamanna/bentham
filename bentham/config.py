@@ -4,6 +4,13 @@ from playhouse.postgres_ext import PostgresqlExtDatabase
 
 
 class Configuration(object):
+    def __init__(self):
+        # Maintain a lazyloaded database conection so we
+        # have a consistent reference to the connection so
+        # we can do things like db.rollback() on the right
+        # connection.
+        self._db = None
+
     def load(self):
         with open(self.config_file(), 'rb') as infile:
             return yaml.load(infile) or {}
@@ -22,8 +29,11 @@ class Configuration(object):
         config = self.load()
 
         try:
-            return PostgresqlExtDatabase(config['datastore']['database'],
-                                         **{k: v for k, v in config['datastore'].items() if
-                                            k not in ('type', 'database')})
+            if self._db is None:
+                self._db = PostgresqlExtDatabase(
+                    config['datastore']['database'],
+                    **{k: v for k, v in config['datastore'].items() if
+                       k not in ('type', 'database')})
+            return self._db
         except KeyError:
             raise Exception('No datastore found in configuration.')
