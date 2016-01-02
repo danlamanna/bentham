@@ -16,3 +16,4 @@ requests-oauthlib==0.5.0
 simplejson==3.8.0
 SQLAlchemy==1.0.8
 wheel==0.24.0
+dateutils==0.6.6
