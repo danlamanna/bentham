@@ -5,13 +5,13 @@ datastore:
   user:     bentham
   password: bentham
 
-trackers:
-  - type:     twitter
-    api_key:  foobar
-    secret:   foobarbaz
-    interval: 60
+authentication:
+  personal_github:
+    username: your_user_name
+    access_token: XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-  - type:     github
-    api_key:  foobar
-    secret:   foobarbaz
-    interval: 60
+trackers:
+  - name:     github_notifications
+    task:     bentham.trackers.github.notifications
+    authentication: personal_github
+    interval: 30

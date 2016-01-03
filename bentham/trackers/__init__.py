@@ -3,6 +3,7 @@ from celery import Celery, Task
 from bentham import configObject
 from bentham.database import Event
 from datetime import timedelta
+from bentham.config import TrackerConfigException
 
 
 class BenthamTrackerTask(Task):
@@ -31,6 +32,17 @@ class BenthamTrackerTask(Task):
             self._config = configObject.load()
         return self._config
 
+    @staticmethod
+    def validate_tracker_config(tracker_config):
+        if 'name' not in tracker_config.keys():
+            raise TrackerConfigException('"name" must be defined in tracker!')
+        if 'task' not in tracker_config.keys():
+            raise TrackerConfigException('"tracker" must be defined for {} tracker!'
+                                         .format(tracker_config['name']))
+        if 'interval' not in tracker_config.keys():
+            raise TrackerConfigException('"interval" must be defined for {} tracker!'
+                                         .format(tracker_config['name']))
+
 
 class Schedule(object):
     def __init__(self, config):
@@ -55,9 +67,6 @@ app = Celery('bentham',
              backend='amqp://rabbit:rabbit@localhost',
              include=['bentham.trackers.fib',
                       'bentham.trackers.github'])
-
-
-
 
 # Optional configuration, see the application user guide.
 

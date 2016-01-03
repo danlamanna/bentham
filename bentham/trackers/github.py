@@ -1,12 +1,46 @@
 from __future__ import absolute_import
 from bentham.trackers import app, BenthamTrackerTask
 from bentham.database import Event
+from bentham.config import ConfigurationException, TrackerConfigException
 import dateutil.parser
 import json
 import requests
 import peewee
 
 API_ROOT = "https://api.github.com/"
+
+
+class GithubTrackerTask(BenthamTrackerTask):
+    abstract = True
+
+    @staticmethod
+    def validate_tracker_config(tracker_config):
+        BenthamTrackerTask.validate_tracker_config(tracker_config)
+        if 'authentication' not in tracker_config:
+            raise TrackerConfigException('"authentication" must be defined for {} tracker!'
+                                         .format(tracker_config['name']))
+
+    def get_auth(self, tracker_config):
+        try:
+            auth_key = tracker_config['authentication']
+            return (self.config['authentication'][auth_key]['username'],
+                    self.config['authentication'][auth_key]['access_token'])
+        except KeyError:
+            if 'authentication' not in tracker_config.keys():
+                raise TrackerConfigException('Github trackers require an "authentication"'
+                                             'attribute')
+            else:
+                auth_key = tracker_config['authentication']
+                if auth_key not in self.config['authentication'].keys():
+                    raise ConfigurationException('Authentication section "{}" not found'
+                                                 .format(auth_key))
+
+                if 'username' not in self.config['authentication'][auth_key].keys():
+                    raise ConfigurationException('Github authentication methods require'
+                                                 'a "username" attribute')
+                if 'access_token' not in self.config['authentication'][auth_key].keys():
+                    raise ConfigurationException('Github authentication methods require'
+                                                 'an "access_token" attribute')
 
 
 class GithubMessageManager(object):
@@ -52,26 +86,27 @@ class NotificationMessageManager(GithubMessageManager):
             'url': notification['subject']['url']
         }
 
-    def get_message_type(self, event):
-        return event['reason']
+    def get_message_type(self, notification):
+        return notification['reason']
 
 
-@app.task(base=BenthamTrackerTask, bind=True)
-def notifications(self, config):
+@app.task(base=GithubTrackerTask, bind=True)
+def notifications(self, tracker_config):
+    GithubTrackerTask.validate_tracker_config(tracker_config)
 
-    auth = (config['username'], config['access_token'])
-    r = requests.get(API_ROOT + "notifications", auth=auth)
+    r = requests.get(API_ROOT + "notifications",
+                     auth=self.get_auth(tracker_config))
 
-    message_manager = NotificationMessageManager(config)
+    message_manager = NotificationMessageManager(tracker_config)
 
     for notification in r.json():
         try:
             Event(tracker=self.name,
                   occurred_at=dateutil.parser.parse(notification['updated_at']),
-                  source_identifier=config['name'],
+                  source_identifier=tracker_config['name'],
                   event_hash=notification['id'],
                   message=message_manager.parse(notification),
                   raw_event_json=json.dumps(notification)).save()
         except peewee.IntegrityError:
-            self.db.rollback()
             # Some kind of error logging here?
+            self.db.rollback()

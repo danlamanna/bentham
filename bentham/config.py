@@ -3,6 +3,14 @@ import yaml
 from playhouse.postgres_ext import PostgresqlExtDatabase
 
 
+class ConfigurationException(Exception):
+    pass
+
+
+class TrackerConfigException(ConfigurationException):
+    pass
+
+
 class Configuration(object):
     def __init__(self):
         # Maintain a lazyloaded database conection so we
