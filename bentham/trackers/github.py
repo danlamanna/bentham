@@ -5,7 +5,6 @@ import dateutil.parser
 import json
 import requests
 import peewee
-import hashlib
 
 API_ROOT = "https://api.github.com/"
 
