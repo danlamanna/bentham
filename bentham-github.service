@@ -1,0 +1,11 @@
+[Unit]
+Description=tracking github notifications via Bentham
+After=network.target
+
+[Service]
+Type=simple
+User=dan
+Group=dan
+Environment=PYENV_VIRTUAL_ENV=/home/dan/.pyenv/versions/2.7.11/envs/bentham-2.7.11
+Environment=VIRTUAL_ENV=/home/dan/.pyenv/versions/2.7.11/envs/bentham-2.7.11
+ExecStart=/home/dan/.pyenv/shims/python /home/dan/projects/bentham/github.py

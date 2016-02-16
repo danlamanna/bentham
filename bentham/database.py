@@ -1,24 +1,26 @@
-from peewee import Model, DateTimeField, IntegerField, CharField, TextField, BooleanField
-from playhouse.postgres_ext import JSONField
-from bentham import configObject
+from sqlalchemy import (func, UniqueConstraint, Table, Column, Integer, String, MetaData,
+                        DateTime, Boolean)
+from sqlalchemy.dialects.postgresql import JSONB
 
 
-class Event(Model):
-    class Meta:
-        database = configObject.get_pg_db()
-        db_table = 'events'
+metadata = MetaData()
 
-        indexes = (
-            (('occurred_at', 'tracker', 'source_identifier', 'raw_event',
-              'raw_event_json'), True),
-        )
+events = Table('events', metadata,
+               Column('id', Integer, primary_key=True),
+               Column('created_at', DateTime(timezone=True), default=func.now()),
+               Column('occurred_at', DateTime(timezone=True)),
+               Column('tracker', String),
+               Column('source', String),
+               Column('message', String),
+               Column('raw', String),
+               Column('raw_json', JSONB, default={}),
+               Column('acknowledged', Boolean, default=False),
+               UniqueConstraint('occurred_at', 'tracker', 'source', 'message',
+                                name='unique_idx'))
 
-    id = IntegerField()
-    created_at = DateTimeField()
-    occurred_at = DateTimeField()
-    tracker = CharField()
-    source_identifier = CharField()
-    message = CharField()
-    raw_event = TextField()
-    raw_event_json = JSONField()
-    ack = BooleanField()
+checkins = Table('checkins', metadata,
+                 Column('id', Integer, primary_key=True),
+                 Column('tracker', String),
+                 Column('source', String),
+                 Column('checkin', DateTime(timezone=True), default=func.now()),
+                 UniqueConstraint('tracker', 'source', name='tracker_source_idx'))
