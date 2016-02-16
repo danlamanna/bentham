@@ -1,0 +1,6 @@
+[Unit]
+Description=tracks github notifications (via Bentham) every 5 minutes
+
+[Timer]
+OnCalendar=*:0/5
+Unit=bentham-github.service
