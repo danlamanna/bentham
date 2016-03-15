@@ -18,14 +18,3 @@ def bentham_checkin(tracker, source, db, cfg):
         db.execute(checkins.insert(),
                    tracker=tracker,
                    source=source)
-
-
-def bentham_tracker(tracker, source):
-    def bentham_tracker_decorator(f):
-        def wrapper(tracker, source):
-            args = (tracker, source, configObject.get_pg_db(),
-                    configObject.load('trackers', tracker + '.yml')[source])
-            f(*args)
-            bentham_checkin(*args)
-        return wrapper(tracker, source)
-    return bentham_tracker_decorator
