@@ -3,3 +3,4 @@ psycopg2==2.6.1
 pytest==2.8.7
 PyYAML==3.11
 SQLAlchemy==1.0.12
+pgpubsub==0.0.5

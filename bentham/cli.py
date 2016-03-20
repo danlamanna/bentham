@@ -1,10 +1,12 @@
 from bentham import configObject
 from bentham.database import events
+from bentham.listener import listener
 from bentham.utils import bentham_checkin
 
 import click
 import datetime as dt
 import importlib
+import json
 import socket
 import sys
 
@@ -48,7 +50,7 @@ def client(client_name):
     """
     try:
         client_module = importlib.import_module('bentham.clients.%s' % client_name)
-        client_func = getattr(client_module, 'listen')
+        client_func = getattr(client_module, 'notify')
     except ImportError:
         click.secho('Unable to find client bentham.clients.%s' % client_name, err=True, fg='red')
         sys.exit(1)
@@ -56,7 +58,9 @@ def client(client_name):
         click.secho('Client bentham.clients.%s has no listen function' % tracker, err=True, fg='red')
         sys.exit(1)
 
-    client_func(configObject.get_pg_db())
+
+    for event in listener().events():
+        client_func(json.loads(event.payload))
 
 
 @cli.command()
