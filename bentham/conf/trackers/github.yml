@@ -1,0 +1,4 @@
+danlamanna:
+  auth:
+    type: token
+    token: 123456

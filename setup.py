@@ -7,5 +7,14 @@ setup(
     license="",
     description="",
     version="0.1.0",
-    packages=['bentham']
+    packages=['bentham',
+              'bentham.clients',
+              'bentham.trackers'],
+    install_requires=[
+        'Click',
+    ],
+    entry_points='''
+    [console_scripts]
+    bentham=bentham.cli:cli
+    ''',
 )
