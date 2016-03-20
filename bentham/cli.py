@@ -53,7 +53,7 @@ def client(client_name):
 
     try:
         client_module = importlib.import_module('bentham.clients.%s' % client_name)
-        client_func = getattr(client_module, 'notify')
+        client = getattr(client_module, '__client__')()
 
     except ImportError:
         click.secho('Unable to find client bentham.clients.%s' % client_name,
@@ -65,18 +65,7 @@ def client(client_name):
         sys.exit(1)
 
     for event in listener().events():
-        event_json = json.loads(event.payload)
-
-        tracker = event_json['tracker']
-        source = event_json['source']
-
-        cfg = configObject.load('trackers', tracker + '.yml')[source]
-
-        tracker_module = importlib.import_module('bentham.trackers.%s' % tracker)
-        receive_func = getattr(tracker_module, 'receive')
-
-        client_func(receive_func(event_json, cfg), event_json)
-
+        client.emit(json.loads(event.payload))
 
 
 @cli.command()

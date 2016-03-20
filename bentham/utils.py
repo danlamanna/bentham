@@ -1,6 +1,11 @@
 from bentham.database import checkins
 from sqlalchemy import func
 from sqlalchemy.sql import select
+from bentham import configObject
+
+
+def get_tracker_config(tracker, source):
+    return configObject.load('trackers', tracker + '.yml')[source]
 
 
 def bentham_checkin(tracker, source, db, cfg):

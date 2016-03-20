@@ -20,7 +20,6 @@ def track(source, db, cfg):
         except IntegrityError:
             pass  # duplicate row
 
-
 def receive(event, cfg):
     template = Template(cfg['message'])
     return template.render(**event['raw_json'])
