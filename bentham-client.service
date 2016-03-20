@@ -1,0 +1,9 @@
+[Unit]
+Description=listening for Bentham notifications
+After=network.target
+
+[Service]
+Type=simple
+Environment=VIRTUAL_ENV=/home/dan/.virtualenvs/bentham-sys
+Environment=DISPLAY=:0
+ExecStart=/home/dan/.virtualenvs/bentham-sys/bin/bentham client libnotify
