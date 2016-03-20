@@ -1,6 +1,7 @@
 from github3 import login
 from bentham.database import events
 from sqlalchemy.exc import IntegrityError
+from jinja2 import Template
 
 TRACKER_ID = 'github'
 
@@ -18,3 +19,8 @@ def track(source, db, cfg):
                        raw_json=notification.to_json())
         except IntegrityError:
             pass  # duplicate row
+
+
+def receive(event, cfg):
+    template = Template(cfg['message'])
+    return template.render(**event['raw_json'])

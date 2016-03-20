@@ -6,3 +6,4 @@ SQLAlchemy==1.0.12
 pgpubsub==0.0.5
 notify2==0.3
 flake8==2.5.4
+Jinja2==2.8

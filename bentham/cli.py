@@ -50,9 +50,11 @@ def client(client_name):
     dump of the event as it occurs using the LISTEN/NOTIFY facilities built into
     PostgreSQL.
     """
+
     try:
         client_module = importlib.import_module('bentham.clients.%s' % client_name)
         client_func = getattr(client_module, 'notify')
+
     except ImportError:
         click.secho('Unable to find client bentham.clients.%s' % client_name,
                     err=True, fg='red')
@@ -63,7 +65,18 @@ def client(client_name):
         sys.exit(1)
 
     for event in listener().events():
-        client_func(json.loads(event.payload))
+        event_json = json.loads(event.payload)
+
+        tracker = event_json['tracker']
+        source = event_json['source']
+
+        cfg = configObject.load('trackers', tracker + '.yml')[source]
+
+        tracker_module = importlib.import_module('bentham.trackers.%s' % tracker)
+        receive_func = getattr(tracker_module, 'receive')
+
+        client_func(receive_func(event_json, cfg), event_json)
+
 
 
 @cli.command()

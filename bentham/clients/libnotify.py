@@ -2,6 +2,5 @@ import notify2
 
 notify2.init('Bentham')
 
-
-def notify(event):
-    notify2.Notification(event['message']).show()
+def notify(self, message, event):
+    notify2.Notification(message).show()

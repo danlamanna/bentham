@@ -1,5 +1,2 @@
-import json
-
-
-def notify(event):
-    print(json.dumps(event, indent=2))
+def notify(message, event):
+    print(message)
