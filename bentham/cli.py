@@ -24,10 +24,12 @@ def track(tracker, source):
         tracker_module = importlib.import_module('bentham.trackers.%s' % tracker)
         tracker_func = getattr(tracker_module, 'track')
     except ImportError:
-        click.secho('Unable to find tracker bentham.trackers.%s' % tracker, err=True, fg='red')
+        click.secho('Unable to find tracker bentham.trackers.%s' % tracker,
+                    err=True, fg='red')
         sys.exit(1)
     except AttributeError:
-        click.secho('Tracker bentham.trackers.%s has no track function' % tracker, err=True, fg='red')
+        click.secho('Tracker bentham.trackers.%s has no track function' % tracker,
+                    err=True, fg='red')
         sys.exit(1)
 
     db, cfg = (configObject.get_pg_db(),
@@ -52,12 +54,13 @@ def client(client_name):
         client_module = importlib.import_module('bentham.clients.%s' % client_name)
         client_func = getattr(client_module, 'notify')
     except ImportError:
-        click.secho('Unable to find client bentham.clients.%s' % client_name, err=True, fg='red')
+        click.secho('Unable to find client bentham.clients.%s' % client_name,
+                    err=True, fg='red')
         sys.exit(1)
     except AttributeError:
-        click.secho('Client bentham.clients.%s has no listen function' % tracker, err=True, fg='red')
+        click.secho('Client bentham.clients.%s has no listen function' % client_name,
+                    err=True, fg='red')
         sys.exit(1)
-
 
     for event in listener().events():
         client_func(json.loads(event.payload))

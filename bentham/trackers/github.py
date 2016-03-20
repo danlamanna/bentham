@@ -4,6 +4,7 @@ from sqlalchemy.exc import IntegrityError
 
 TRACKER_ID = 'github'
 
+
 def track(source, db, cfg):
     github = login(token=cfg['auth']['token'])
 

@@ -1,5 +1,5 @@
-from sqlalchemy import (event, func, UniqueConstraint, Table, Column, Integer, String, MetaData,
-                        DateTime, Boolean)
+from sqlalchemy import (event, func, UniqueConstraint, Table, Column, Integer, String,
+                        MetaData, DateTime, Boolean)
 from sqlalchemy.dialects.postgresql import JSONB
 
 
